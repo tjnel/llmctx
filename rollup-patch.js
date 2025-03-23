@@ -21,6 +21,8 @@ if (fs.existsSync(nativeJsPath)) {
   
   // Comprehensive replacement that doesn't try to load platform-specific binaries
   const patchedContent = `
+import acorn from 'acorn';
+
 // Patched version that doesn't try to load platform-specific binaries
 export const getDefaultOnwarn = () => () => {};
 export const version = '4.9.1';
@@ -29,12 +31,12 @@ export const createFilter = () => () => true;
 export const rollup = null;
 export const watch = null;
 
-// Add missing exports that are required by other Rollup modules
-export const parse = async () => ({ type: 'Program', body: [] });
-export const parseAsync = async () => ({ type: 'Program', body: [] });
-export const parseAst = () => ({ type: 'Program', body: [] });
-export const parseAstAsync = async () => ({ type: 'Program', body: [] });
-export const parseExpression = () => ({ type: 'Expression', body: [] });
+// Use acorn for parsing
+export const parse = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module' });
+export const parseAsync = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module' });
+export const parseAst = (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module' });
+export const parseAstAsync = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module' });
+export const parseExpression = (code) => acorn.parseExpressionAt(code, 0, { ecmaVersion: 2020 });
 
 // Add hash function exports
 export const xxhashBase16 = () => 'xxhash-placeholder';
