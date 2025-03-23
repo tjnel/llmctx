@@ -4,6 +4,5 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "sveltekit",
-  "regions": ["iad1"],
-  "nodeVersion": "20.x"
+  "regions": ["iad1"]
 }
