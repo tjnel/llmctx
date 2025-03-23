@@ -50,5 +50,10 @@
       "@rollup/rollup-linux-x64-gnu": "4.9.1",
       "@rollup/rollup-linux-x64-musl": "4.9.1"
     }
+  },
+  "resolutions": {
+    "svelte": "^5.0.0-next.262",
+    "@melt-ui/svelte/svelte": "^5.0.0-next.262",
+    "bits-ui/@melt-ui/svelte/svelte": "^5.0.0-next.262"
   }
 }

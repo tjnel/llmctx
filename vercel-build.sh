@@ -7,7 +7,7 @@ rm -rf node_modules package-lock.json
 
 # Install dependencies with specific flags to avoid Rollup issues
 echo "Installing dependencies..."
-npm install --no-optional --prefer-offline --no-audit --no-fund
+npm install --no-optional --prefer-offline --no-audit --no-fund --legacy-peer-deps
 
 # Apply the Rollup patch to fix dependency issues
 echo "Applying Rollup patch..."
