@@ -53,7 +53,7 @@ fi
 
 # Run SvelteKit sync to generate necessary files
 echo "Running SvelteKit sync..."
-npm run sync
+npx svelte-kit sync
 
 # Run the build command with increased memory allocation
 echo "Running build..."
