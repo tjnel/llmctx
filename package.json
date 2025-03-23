@@ -6,6 +6,7 @@
     "dev": "vite dev",
     "build": "NODE_OPTIONS=--max_old_space_size=4096 vite build",
     "preview": "vite preview",
+    "sync": "svelte-kit sync",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check . && eslint .",
