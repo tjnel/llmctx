@@ -32,11 +32,11 @@ export const rollup = null;
 export const watch = null;
 
 // Use acorn for parsing
-export const parse = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module' });
-export const parseAsync = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module' });
-export const parseAst = (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module' });
-export const parseAstAsync = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module' });
-export const parseExpression = (code) => acorn.parseExpressionAt(code, 0, { ecmaVersion: 2020 });
+export const parse = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module', locations: true, ranges: true });
+export const parseAsync = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module', locations: true, ranges: true });
+export const parseAst = (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module', locations: true, ranges: true });
+export const parseAstAsync = async (code) => acorn.parse(code, { ecmaVersion: 2020, sourceType: 'module', locations: true, ranges: true });
+export const parseExpression = (code) => acorn.parseExpressionAt(code, 0, { ecmaVersion: 2020, sourceType: 'module', locations: true, ranges: true });
 
 // Add hash function exports
 export const xxhashBase16 = () => 'xxhash-placeholder';
