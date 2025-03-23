@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite dev",
-    "prebuild": "node rollup-patch.js && svelte-kit sync",
-    "build": "NODE_OPTIONS=--max_old_space_size=4096 vite build",
+    "prebuild": "node fix-rollup-exports.js && svelte-kit sync",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 vite build --config vite.config.js",
     "preview": "vite preview",
     "sync": "svelte-kit sync",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -48,8 +48,8 @@
     "tailwind-variants": "^0.2.1"
   },
   "overrides": {
-    "rollup": "^3.29.4",
-    "@rollup/pluginutils": "^5.0.5"
+    "rollup": "^3.25.1",
+    "@rollup/pluginutils": "^5.0.2"
   },
   "resolutions": {
     "svelte": "^5.0.0-next.262",
