@@ -13,7 +13,11 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter({
 			// Explicitly specify Node.js 18 as the runtime
-			runtime: 'nodejs18.x'
+			runtime: 'nodejs18.x',
+			// Add a bypass token for prerendering (must be 32+ characters)
+			prerender: {
+				bypassToken: 'pocketctx-vercel-prerender-bypass-token-32chars-min'
+			}
 		})
 	}
 }
