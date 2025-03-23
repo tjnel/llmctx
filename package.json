@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build --no-optional",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 vite build --no-optional",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -40,7 +40,7 @@
   },
   "type": "module",
   "dependencies": {
-    "bits-ui": "^0.21.16",
+    "bits-ui": "^0.11.6",
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.5.3",
     "tailwind-variants": "^0.2.1"
@@ -55,5 +55,8 @@
     "svelte": "^5.0.0-next.262",
     "@melt-ui/svelte/svelte": "^5.0.0-next.262",
     "bits-ui/@melt-ui/svelte/svelte": "^5.0.0-next.262"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
