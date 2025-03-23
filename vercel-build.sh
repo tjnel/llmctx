@@ -5,9 +5,9 @@ set -e
 echo "Cleaning node_modules and package-lock.json..."
 rm -rf node_modules package-lock.json
 
-# Install dependencies with specific flags to avoid Rollup issues
+# Install dependencies with specific flags
 echo "Installing dependencies..."
-npm install --no-optional --prefer-offline --no-audit --no-fund --ignore-scripts --legacy-peer-deps
+npm install --prefer-offline --no-audit --no-fund --ignore-scripts --legacy-peer-deps
 
 # Apply the Rollup patch directly in the build script
 echo "Applying Rollup patch..."
