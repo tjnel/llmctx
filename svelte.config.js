@@ -6,9 +6,13 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// Use the Vercel adapter with explicit Node.js version
+		// Use the Vercel adapter with explicit Node.js version and timeout settings
 		adapter: adapter({
-			runtime: 'nodejs20.x'
+			runtime: 'nodejs20.x',
+			// Set maximum function execution time to 60 seconds
+			edgeConfig: {
+				maxDuration: 60
+			}
 		})
 	}
 }

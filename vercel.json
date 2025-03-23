@@ -5,9 +5,6 @@
   "installCommand": "npm install",
   "framework": "sveltekit",
   "regions": ["iad1"],
-  "functions": {
-    ".svelte-kit/output/server/**/*.js": {
-      "maxDuration": 60
-    }
-  }
+  "crons": [],
+  "cleanUrls": true
 }
