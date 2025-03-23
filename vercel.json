@@ -3,8 +3,5 @@
   "outputDirectory": ".svelte-kit/output",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "sveltekit",
-  "env": {
-    "PRERENDER_BYPASS_TOKEN": "c6a07c8e9ad8b8f0e6a5c5f4d3b2a1e0d9c8b7a6d5e4f3c2b1a0p1o2i3u4y5t6r7e8w9q0"
-  }
+  "framework": "sveltekit"
 }

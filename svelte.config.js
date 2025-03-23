@@ -6,18 +6,9 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// Completely disable prerendering
-		prerender: {
-			enabled: false
-		},
-		
 		// Use the Vercel adapter with minimal configuration
 		adapter: adapter({
-			runtime: 'nodejs18.x',
-			// Explicitly disable adapter-level prerendering
-			prerender: {
-				enabled: false
-			}
+			runtime: 'nodejs18.x'
 		})
 	}
 }
