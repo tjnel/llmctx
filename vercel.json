@@ -4,5 +4,10 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "sveltekit",
-  "regions": ["iad1"]
+  "regions": ["iad1"],
+  "functions": {
+    "**/*.js": {
+      "maxDuration": 60
+    }
+  }
 }

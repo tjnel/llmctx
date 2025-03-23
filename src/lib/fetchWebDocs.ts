@@ -75,73 +75,104 @@ export async function fetchWebDocs(config: WebDocsConfig): Promise<string> {
     
     // Ensure we have distinct crawling behavior for each preset type
     
-    // Maximum number of pages to crawl
-    const maxPages = 100
+    // Maximum number of pages to crawl - reduced to prevent serverless function timeouts
+    const maxPages = 25
     
     console.log(`Starting to crawl ${title} documentation from ${baseUrl}`)
     
     // Track page count
     let pageCount = 0
     
-    while (pendingUrls.length > 0 && pageCount < maxPages) {
-        const currentUrl = pendingUrls.shift()!
+    // Timeout protection - ensure we don't exceed Vercel's function timeout
+    const startTime = Date.now();
+    const timeoutMs = 45000; // 45 seconds timeout to allow for response processing
+    
+    // Process pages in batches to improve efficiency
+    const processBatch = async (url: string): Promise<void> => {
+        if (visitedUrls.has(url)) {
+            return;
+        }
         
-        if (visitedUrls.has(currentUrl)) {
-            continue
+        // Check if we're approaching the timeout limit
+        if (Date.now() - startTime > timeoutMs) {
+            console.log('Approaching timeout limit, stopping crawl');
+            return;
         }
         
         // Check if the URL matches the focus areas and doesn't match excluded areas
-        const shouldProcess = shouldProcessUrl(currentUrl, baseUrl, focusAreas, excludeAreas, includeUrlPatterns);
+        const shouldProcess = shouldProcessUrl(url, baseUrl, focusAreas, excludeAreas, includeUrlPatterns);
         if (!shouldProcess) {
-            console.log(`SKIPPING URL (filtered out): ${currentUrl}`);
-            continue;
+            console.log(`SKIPPING URL (filtered out): ${url}`);
+            return;
         }
-        console.log(`PROCESSING URL: ${currentUrl}`);
         
-        visitedUrls.add(currentUrl)
-        pageCount++
-        console.log(`Fetching ${currentUrl} (${pageCount}/${maxPages})`)
+        console.log(`PROCESSING URL: ${url}`);
+        visitedUrls.add(url);
+        pageCount++;
+        console.log(`Fetching ${url} (${pageCount}/${maxPages})`);
         
         try {
-            const response = await fetch(currentUrl)
+            const response = await fetch(url, {
+                // Set a timeout for the fetch operation
+                signal: AbortSignal.timeout(10000) // 10 second timeout per request
+            });
+            
             if (!response.ok) {
-                console.error(`Failed to fetch ${currentUrl}: ${response.statusText}`)
-                continue
+                console.error(`Failed to fetch ${url}: ${response.statusText}`);
+                return;
             }
             
-            const html = await response.text()
+            const html = await response.text();
             
             // Extract and process content
-            const pageContent = extractContentFromHtml(html)
+            const pageContent = extractContentFromHtml(html);
             if (pageContent.trim()) {
                 // Add the URL as a header to help organize content
-                const contentWithHeader = `## Documentation: ${currentUrl.replace(baseUrl, '')}
-
-${pageContent}`
-                contents.push(contentWithHeader)
+                const contentWithHeader = `## Documentation: ${url.replace(baseUrl, '')}\n\n${pageContent}`;
+                contents.push(contentWithHeader);
             }
             
             // Find more links to crawl
-            const links = extractLinks(html, baseUrl)
+            const links = extractLinks(html, baseUrl);
+            
+            // Process only a limited number of links to avoid timeout
+            const linksToProcess = [];
             
             // If we have focus areas, prioritize links that match those areas
             if (focusAreas && focusAreas.length > 0) {
-                const prioritizedLinks = prioritizeLinks(links, baseUrl, focusAreas)
+                const prioritizedLinks = prioritizeLinks(links, baseUrl, focusAreas);
                 for (const link of prioritizedLinks) {
                     if (!visitedUrls.has(link) && shouldCrawl(link, baseUrl, urlPatterns)) {
-                        pendingUrls.push(link)
+                        linksToProcess.push(link);
                     }
                 }
             } else {
                 for (const link of links) {
                     if (!visitedUrls.has(link) && shouldCrawl(link, baseUrl, urlPatterns)) {
-                        pendingUrls.push(link)
+                        linksToProcess.push(link);
                     }
                 }
             }
+            
+            // Add limited number of discovered links to pending URLs
+            for (const link of linksToProcess.slice(0, 5)) { // Only process up to 5 links per page
+                pendingUrls.push(link);
+            }
         } catch (error) {
-            console.error(`Error processing ${currentUrl}:`, error)
+            console.error(`Error processing ${url}:`, error);
         }
+    };
+    
+    // Main crawling loop with timeout protection
+    while (pendingUrls.length > 0 && pageCount < maxPages) {
+        // Check if we're approaching the timeout limit
+        if (Date.now() - startTime > timeoutMs) {
+            console.log('Approaching timeout limit, stopping crawl');
+            break;
+        }
+        
+        const currentUrl = pendingUrls.shift()!;
+        await processBatch(currentUrl);
     }
     
     console.log(`Crawled ${visitedUrls.size} pages from ${title} documentation`)
@@ -368,35 +399,50 @@ function shouldCrawl(url: string, baseUrl: string, patterns: string[]): boolean 
     const relativePath = url.substring(baseUrl.length)
     console.log(`shouldCrawl checking ${relativePath} against patterns: ${JSON.stringify(patterns)}`)
     
+    // First check for negated patterns - these take precedence
     for (const pattern of patterns) {
-        const isNegated = pattern.startsWith('!')
-        const matchPattern = isNegated ? pattern.slice(1) : pattern
-        
-        // Simple wildcard matching
-        const regexPattern = matchPattern
-            .replace(/\./g, '\\.')
-            .replace(/\*/g, '.*')
-        
-        const matches = new RegExp(`^${regexPattern}$`).test(relativePath)
-        
-        if (isNegated && matches) {
-            console.log(`URL ${relativePath} negated by pattern ${pattern}`)
-            return false
-        } else if (!isNegated && matches) {
-            console.log(`URL ${relativePath} matched pattern ${pattern}`)
-            return true
+        if (pattern.startsWith('!')) {
+            const matchPattern = pattern.slice(1)
+            // Simple wildcard matching
+            const regexPattern = matchPattern
+                .replace(/\./g, '\\.')
+                .replace(/\*/g, '.*')
+            
+            const matches = new RegExp(`^${regexPattern}$`).test(relativePath)
+            
+            if (matches) {
+                console.log(`URL ${relativePath} negated by pattern ${pattern}`)
+                return false
+            }
         }
     }
     
-    // For PocketBase main preset, we want to include everything except negated patterns
-    // Check if we have any non-negated wildcard patterns
+    // Check for specific pattern matches
+    const hasWildcardCatchAll = patterns.includes('**/*')
+    
+    // Check for specific matches first
     for (const pattern of patterns) {
-        if (!pattern.startsWith('!') && pattern.includes('*')) {
-            console.log(`URL ${relativePath} allowed by default wildcard pattern`);
-            return true;
+        if (!pattern.startsWith('!')) {
+            // Simple wildcard matching
+            const regexPattern = pattern
+                .replace(/\./g, '\\.')
+                .replace(/\*/g, '.*')
+            
+            const matches = new RegExp(`^${regexPattern}$`).test(relativePath)
+            
+            if (matches) {
+                console.log(`URL ${relativePath} matched pattern ${pattern}`)
+                return true
+            }
         }
     }
     
-    console.log(`URL ${relativePath} did not match any patterns, skipping`);
+    // If we have a catch-all pattern and no specific patterns matched, allow it
+    if (hasWildcardCatchAll) {
+        console.log(`URL ${relativePath} allowed by catch-all wildcard pattern **/*`)
+        return true
+    }
+    
+    console.log(`URL ${relativePath} did not match any patterns, skipping`)
     return false
 }
