@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { dev } from '$app/environment'
+	import { injectAnalytics } from '@vercel/analytics/sveltekit'
 
 	// Types
 	import type { PageData } from './$types'
@@ -11,6 +12,9 @@
 	}
 
 	let { children }: Props = $props()
+	
+	// Initialize Vercel Analytics
+	injectAnalytics()
 </script>
 
 <svelte:head>
