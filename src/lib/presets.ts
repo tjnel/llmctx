@@ -51,7 +51,7 @@ export const presets: Record<string, PresetConfig> = {
 		title: 'PocketPages',
 		type: 'web',
 		baseUrl: 'https://pocketpages.dev/docs',
-		urlPatterns: ['**/*.html'],
+		urlPatterns: ['**/*'],
 		minimize: {
 			removeCodeBlocks: false,
 			removeSquareBrackets: false,
