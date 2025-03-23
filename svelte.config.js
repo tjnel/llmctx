@@ -14,10 +14,8 @@ const config = {
 		adapter: adapter({
 			// Explicitly specify Node.js 18 as the runtime
 			runtime: 'nodejs18.x',
-			// Add a bypass token for prerendering (must be 32+ characters)
-			prerender: {
-				bypassToken: 'pocketctx-vercel-prerender-bypass-token-32chars-min'
-			}
+			// Disable prerendering completely
+			prerender: false
 		})
 	}
 }
