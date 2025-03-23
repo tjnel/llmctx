@@ -16,6 +16,10 @@ echo "Installing dependencies..."
 # Removed --ignore-scripts flag as it may prevent necessary setup scripts from running
 npm install --prefer-offline --no-audit --no-fund --legacy-peer-deps
 
+# Ensure @sveltejs/kit is properly installed
+echo "Ensuring SvelteKit is installed..."
+npm install @sveltejs/kit --no-save
+
 # Apply the Rollup patch directly in the build script
 echo "Applying Rollup patch..."
 ROLLUP_NATIVE_PATH="./node_modules/rollup/dist/native.js"
@@ -53,7 +57,8 @@ fi
 
 # Run SvelteKit sync to generate necessary files
 echo "Running SvelteKit sync..."
-npx svelte-kit sync
+# Use the full path to the svelte-kit binary
+node ./node_modules/@sveltejs/kit/svelte-kit.js sync
 
 # Run the build command with increased memory allocation
 echo "Running build..."
