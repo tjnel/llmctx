@@ -8,7 +8,7 @@ const config = {
 	kit: {
 		// Use the Vercel adapter with minimal configuration
 		adapter: adapter({
-			runtime: 'nodejs18.x'
+			runtime: 'nodejs20.x'
 		})
 	}
 }

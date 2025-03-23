@@ -3,5 +3,10 @@
   "outputDirectory": ".svelte-kit/output",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "sveltekit"
+  "framework": "sveltekit",
+  "functions": {
+    "api/*": {
+      "runtime": "nodejs20.x"
+    }
+  }
 }

@@ -57,6 +57,6 @@
     "bits-ui/@melt-ui/svelte/svelte": "^5.0.0-next.262"
   },
   "engines": {
-    "node": ">=22.x <24"
+    "node": ">=18.x <24"
   }
 }
