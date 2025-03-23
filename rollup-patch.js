@@ -21,7 +21,7 @@ if (fs.existsSync(nativeJsPath)) {
   
   // Comprehensive replacement that doesn't try to load platform-specific binaries
   const patchedContent = `
-import acorn from 'acorn';
+import * as acorn from 'acorn';
 
 // Patched version that doesn't try to load platform-specific binaries
 export const getDefaultOnwarn = () => () => {};
