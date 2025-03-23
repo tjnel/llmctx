@@ -14,7 +14,6 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "rollup": "^4.9.1",
     "@octokit/rest": "^21.0.2",
     "@sveltejs/adapter-vercel": "^5.4.4",
     "@sveltejs/kit": "^2.6.2",
@@ -26,6 +25,7 @@
     "eslint": "^9.12.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.44.1",
+    "estree-walker": "^3.0.0",
     "globals": "^15.10.0",
     "js-base64": "^3.7.7",
     "minimatch": "^10.0.1",
@@ -56,6 +56,6 @@
     "bits-ui/@melt-ui/svelte/svelte": "^5.0.0-next.262"
   },
   "engines": {
-    "node": "22.x"
+    "node": ">=22.x <24"
   }
 }
