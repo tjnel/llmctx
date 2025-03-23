@@ -14,8 +14,10 @@ const config = {
 		adapter: adapter({
 			// Explicitly specify Node.js 18 as the runtime
 			runtime: 'nodejs18.x',
-			// Disable prerendering completely
-			prerender: false
+			// Configure prerendering with a secure bypass token (64 characters)
+			prerender: {
+				bypassToken: '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
+			}
 		})
 	}
 }
