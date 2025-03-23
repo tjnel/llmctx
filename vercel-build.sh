@@ -30,6 +30,12 @@ export const parseAsync = async () => ({ type: 'Program', body: [] });
 export const parseAst = () => ({ type: 'Program', body: [] });
 export const parseAstAsync = async () => ({ type: 'Program', body: [] });
 export const parseExpression = () => ({ type: 'Expression', body: [] });
+
+// Add hash function exports
+export const xxhashBase16 = () => 'xxhash-placeholder';
+export const xxhashBase64Url = () => 'xxhash-placeholder';
+export const xxhashBase36 = () => 'xxhash-placeholder';
+export const xxhash = () => 'xxhash-placeholder';
 EOF
   echo "Rollup successfully patched!"
 else
