@@ -23,6 +23,13 @@ export const warnDeprecatedOptionValue = () => {};
 export const createFilter = () => () => true;
 export const rollup = null;
 export const watch = null;
+
+// Add missing exports that are required by other Rollup modules
+export const parse = async () => ({ type: 'Program', body: [] });
+export const parseAsync = async () => ({ type: 'Program', body: [] });
+export const parseAst = () => ({ type: 'Program', body: [] });
+export const parseAstAsync = async () => ({ type: 'Program', body: [] });
+export const parseExpression = () => ({ type: 'Expression', body: [] });
 EOF
   echo "Rollup successfully patched!"
 else
