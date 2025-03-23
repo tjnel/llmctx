@@ -6,7 +6,7 @@
   "framework": "sveltekit",
   "regions": ["iad1"],
   "functions": {
-    "**/*.js": {
+    ".svelte-kit/output/server/**/*.js": {
       "maxDuration": 60
     }
   }
