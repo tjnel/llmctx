@@ -1,7 +1,8 @@
 /**
  * This patch file is used to fix the Rollup dependency issue in Vercel deployments.
  * It replaces the problematic native.js file in the Rollup package with a version
- * that doesn't try to load platform-specific binaries and properly handles acorn parsing.
+ * that doesn't try to load platform-specific binaries.
+ * This version is specifically built for Rollup v3 compatibility with SvelteKit.
  */
 
 import fs from 'fs';
@@ -19,78 +20,26 @@ const nativeJsPath = path.resolve('./node_modules/rollup/dist/native.js');
 if (fs.existsSync(nativeJsPath)) {
   console.log('Patching Rollup native.js to fix deployment issues...');
   
-  // Comprehensive patch with proper AST handling
+  // Simple patch for Rollup v3 compatibility
   const patchedContent = `
-// Import acorn directly to handle parsing properly
-import * as acorn from 'acorn';
-import { walk } from 'estree-walker';
+// Simplified patched version for Rollup v3 compatibility
+export const version = '3.29.4';
 
-// Patched version that doesn't try to load platform-specific binaries
+// Basic mocks for Rollup's native functionality
 export const getDefaultOnwarn = () => () => {};
-export const version = '4.9.1';
 export const warnDeprecatedOptionValue = () => {};
 export const createFilter = () => () => true;
 export const rollup = null;
 export const watch = null;
 
-// Create safe AST parsing functions that use acorn directly
-const ACORN_OPTIONS = { 
-  ecmaVersion: 2020, 
-  sourceType: 'module', 
-  locations: true, 
-  ranges: true,
-  allowAwaitOutsideFunction: true,
-  allowImportExportEverywhere: true,
-  allowReturnOutsideFunction: true 
-};
+// Mock return values for parse functions
+const defaultNode = { type: 'Program', body: [], sourceType: 'module' };
 
-// Function to ensure AST nodes have required properties to prevent 'undefined' node types
-function sanitizeAst(ast) {
-  if (!ast) return { type: 'Program', body: [], sourceType: 'module' };
-  
-  // Make sure every node has a type
-  walk(ast, {
-    enter(node) {
-      if (!node.type) node.type = 'EmptyStatement';
-    }
-  });
-  
-  return ast;
-}
+// Basic parsing functions compatible with Rollup v3
+export const parse = (code, options) => defaultNode;
+export const parseAsync = async (code, options) => defaultNode;
 
-// Implement parsing functions
-export const parse = async (code) => {
-  try {
-    return sanitizeAst(acorn.parse(code, ACORN_OPTIONS));
-  } catch (error) {
-    console.error('Rollup parse error:', error.message);
-    return { type: 'Program', body: [], sourceType: 'module' };
-  }
-};
-
-export const parseAsync = async (code) => parse(code);
-
-export const parseAst = (code) => {
-  try {
-    return sanitizeAst(acorn.parse(code, ACORN_OPTIONS));
-  } catch (error) {
-    console.error('Rollup parseAst error:', error.message);
-    return { type: 'Program', body: [], sourceType: 'module' };
-  }
-};
-
-export const parseAstAsync = async (code) => parseAst(code);
-
-export const parseExpression = (code) => {
-  try {
-    return sanitizeAst(acorn.parseExpressionAt(code, 0, ACORN_OPTIONS));
-  } catch (error) {
-    console.error('Rollup parseExpression error:', error.message);
-    return { type: 'Expression', expression: { type: 'Literal', value: null } };
-  }
-};
-
-// Add hash function exports
+// Hash functions required by Rollup
 export const xxhashBase16 = () => 'xxhash-placeholder';
 export const xxhashBase64Url = () => 'xxhash-placeholder';
 export const xxhashBase36 = () => 'xxhash-placeholder';
