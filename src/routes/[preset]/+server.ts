@@ -1,7 +1,15 @@
 // Types
 import type { RequestHandler } from './$types'
 
-import { BYPASS_TOKEN } from '$env/static/private'
+// Import environment variables if available
+let BYPASS_TOKEN: string | undefined
+try {
+	// Try to import the bypass token if it exists
+	BYPASS_TOKEN = process.env.BYPASS_TOKEN
+} catch (e) {
+	// If it doesn't exist, that's fine for development
+	BYPASS_TOKEN = 'dev-token'
+}
 
 // Utils
 import { error } from '@sveltejs/kit'
@@ -9,7 +17,9 @@ import { presets } from '$lib/presets'
 import { getCachedOrFetchMarkdown } from '$lib/markdown'
 import { dev } from '$app/environment'
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
+	// Check if this is a download request
+	const isDownload = url.searchParams.get('download') === 'true'
 	const presetNames = params.preset.split(',').map((p) => p.trim())
 
 	if (dev) {
@@ -55,11 +65,21 @@ export const GET: RequestHandler = async ({ params }) => {
 			console.log(`Final combined response length: ${response.length}`)
 		}
 
+		// Create appropriate headers based on whether this is a download or not
+		const headers: HeadersInit = {
+			'Content-Type': 'text/plain; charset=utf-8'
+		}
+
+		// If this is a download request, add the Content-Disposition header
+		if (isDownload) {
+			// Create a filename based on the preset names
+			const filename = presetNames.join('-') + '.txt'
+			headers['Content-Disposition'] = `attachment; filename="${filename}"`
+		}
+
 		return new Response(response, {
 			status: 200,
-			headers: {
-				'Content-Type': 'text/plain; charset=utf-8'
-			}
+			headers
 		})
 	} catch (e) {
 		console.error(`Error fetching documentation for presets [${presetNames.join(', ')}]:`, e)
@@ -70,6 +90,6 @@ export const GET: RequestHandler = async ({ params }) => {
 export const config = {
 	isr: {
 		expiration: 3600,
-		bypassToken: BYPASS_TOKEN
+		bypassToken: BYPASS_TOKEN || 'dev-token'
 	}
 }

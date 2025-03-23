@@ -14,10 +14,12 @@
 </script>
 
 <svelte:head>
+	<title>PocketCTX - PocketBase documentation in LLM-ready format</title>
+	<meta name="description" content="PocketCTX transforms PocketBase docs into LLM-friendly formats for AI assistants" />
 	{#if !dev}
 		<script
 			defer
-			data-domain="llmctx.com"
+			data-domain="pocketctx.click"
 			src="/metrics/metrics.js"
 			data-api="/metrics/api/event"
 		></script>
