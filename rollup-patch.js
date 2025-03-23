@@ -4,8 +4,13 @@
  * that doesn't try to load platform-specific binaries.
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get the current directory in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Path to the Rollup native.js file
 const nativeJsPath = path.resolve('./node_modules/rollup/dist/native.js');
